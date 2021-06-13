@@ -1,0 +1,14 @@
+@import './Vars.scss';
+@import './Media.scss';
+@import '../styles/components/Button.scss';
+@import '../styles/components/Input.scss';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0px;
+  font-family: $theme-font;
+  background-color: $main-color;
+}
