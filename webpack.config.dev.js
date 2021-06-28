@@ -10,7 +10,6 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'assets/app.js',
-    assetModuleFilename: 'assets/[hash][ext][query]',
     publicPath: '/',
   },
   resolve: {
@@ -40,7 +39,14 @@ module.exports = {
       },
       {
         test: /\.(png|gif|jpg)$/,
-        type: 'asset/resource',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'assets/[hash].[ext]',
+            },
+          },
+        ],
       },
     ],
   },
