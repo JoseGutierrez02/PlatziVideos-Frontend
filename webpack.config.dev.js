@@ -1,13 +1,18 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: [
+    './src/frontend/index.js',
+    'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000&reload=true',
+  ],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
     assetModuleFilename: 'assets/[hash][ext][query]',
+    publicPath: '/',
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -32,11 +37,7 @@ module.exports = {
       },
       {
         test: /\.(s*)css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader',
-        ],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
       {
         test: /\.(png|gif|jpg)$/,
@@ -51,11 +52,12 @@ module.exports = {
     open: true,
   },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       template: './public/index.html',
       filename: './index.html',
-      favicon: './src/assets/static/platzi_favicon.png',
+      favicon: './src/frontend/assets/static/platzi_favicon.png',
     }),
     new MiniCssExtractPlugin({
       filename: 'assets/[name].css',
