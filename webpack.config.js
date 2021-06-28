@@ -1,16 +1,17 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './src/frontend/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-    assetModuleFilename: 'assets/[hash][ext][query]',
+    path: path.resolve(__dirname, 'src/server/public'),
+    filename: 'assets/app-[contenthash].js',
+    publicPath: '/',
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -39,27 +40,30 @@ module.exports = {
       },
       {
         test: /\.(png|gif|jpg)$/,
-        type: 'asset/resource',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'assets/[hash].[ext]',
+            },
+          },
+        ],
       },
     ],
   },
   optimization: {
     minimize: true,
-    minimizer: [
-      new CssMinimizerPlugin(),
-      new TerserPlugin(),
-    ],
+    minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
   },
   plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: './public/index.html',
-      filename: './index.html',
-      favicon: './src/assets/static/platzi_favicon.png',
+    new CompressionWebpackPlugin({
+      test: /\.js$|\.css/,
+      filename: '[path][base].gz',
     }),
+    new WebpackManifestPlugin(),
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
-      filename: 'assets/[name].css',
+      filename: 'assets/app-[contenthash].css',
     }),
   ],
 };

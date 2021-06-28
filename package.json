@@ -4,10 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js",
-    "dev": "webpack --config webpack.config.dev.js",
-    "start": "webpack serve --config webpack.config.dev.js",
+    "build": "webpack-cli --config webpack.config.js",
+    "start": "ENV=production node src/server",
     "start:dev": "nodemon src/server/index"
   },
   "keywords": [],
@@ -19,6 +17,7 @@
     "classnames": "^2.3.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "helmet": "^4.6.0",
     "history": "^5.0.0",
     "ignore-styles": "^5.0.1",
     "md5": "^2.3.0",
@@ -32,7 +31,8 @@
     "redux": "^4.1.0",
     "webpack": "^5.40.0",
     "webpack-dev-middleware": "^5.0.0",
-    "webpack-hot-middleware": "^2.25.0"
+    "webpack-hot-middleware": "^2.25.0",
+    "webpack-manifest-plugin": "^3.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
@@ -41,6 +41,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "compression-webpack-plugin": "^8.0.1",
     "css-loader": "^5.2.6",
     "css-minimizer-webpack-plugin": "^3.0.1",
     "eslint": "^7.29.0",
@@ -49,8 +50,6 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.24.0",
     "file-loader": "5.1.0",
-    "html-loader": "^2.1.2",
-    "html-webpack-plugin": "^5.3.2",
     "mini-css-extract-plugin": "^1.6.0",
     "node-sass": "^5.0.0",
     "nodemon": "^2.0.7",
