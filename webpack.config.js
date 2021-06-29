@@ -54,6 +54,24 @@ module.exports = {
   optimization: {
     minimize: true,
     minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
+    splitChunks: {
+      chunks: 'async',
+      cacheGroups: {
+        defaultVendors: {
+          name: 'vendors',
+          chunks: 'all',
+          reuseExistingChunk: true,
+          priority: 1,
+          filename: 'assets/vendor-[contenthash].js',
+          enforce: true,
+          test(module, chunk) {
+            const name = module.nameForCondition && module.nameForCondition();
+            return (chunk) =>
+              chunk.name !== 'vendors' && /[\\/]node_modules[\\/]/.test(name);
+          },
+        },
+      },
+    },
   },
   plugins: [
     new CompressionWebpackPlugin({

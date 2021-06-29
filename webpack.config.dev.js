@@ -48,6 +48,26 @@ module.exports = {
     historyApiFallback: true,
     open: true,
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'async',
+      cacheGroups: {
+        defaultVendors: {
+          name: 'vendors',
+          chunks: 'all',
+          reuseExistingChunk: true,
+          priority: 1,
+          filename: 'assets/vendor.js',
+          enforce: true,
+          test(module, chunk) {
+            const name = module.nameForCondition && module.nameForCondition();
+            return (chunk) =>
+              chunk.name !== 'vendors' && /[\\/]node_modules[\\/]/.test(name);
+          },
+        },
+      },
+    },
+  },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
