@@ -8,6 +8,10 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { renderRoutes } from 'react-router-config';
 import { StaticRouter } from 'react-router-dom';
+import cookieParser from 'cookie-parser';
+import boom from '@hapi/boom';
+import passport from 'passport';
+import axios from 'axios';
 import serverRoutes from '../frontend/routes/serverRoutes';
 import reducer from '../frontend/reducers';
 import initialState from '../frontend/initialState';
@@ -16,6 +20,12 @@ import { config } from './config';
 
 const app = express();
 const { env, port } = config;
+
+app.use(express.json());
+app.use(cookieParser());
+
+// Basic Strategy
+require('./utils/auth/strategies/basic');
 
 if (env === 'development') {
   console.log('Development mode');
@@ -48,7 +58,7 @@ if (env === 'development') {
         'font-src': ['https://fonts.gstatic.com'],
         'media-src': ['*'],
       },
-    })
+    }),
   );
   app.use(helmet.permittedCrossDomainPolicies());
   app.disable('x-powered-by');
@@ -90,11 +100,54 @@ const renderApp = (req, res) => {
       <StaticRouter location={req.url} context={{}}>
         {renderRoutes(serverRoutes)}
       </StaticRouter>
-    </Provider>
+    </Provider>,
   );
 
   res.send(setResponse(html, preloadedState, req.hashManifest));
 };
+
+app.post('/auth/sign-in', async (req, res, next) => {
+  passport.authenticate('basic', (error, data) => {
+    try {
+      if (error || !data) {
+        next(boom.unauthorized());
+      }
+
+      req.login(data, { session: false }, async (error) => {
+        if (error) {
+          next(error);
+        }
+
+        const { token, ...user } = data;
+
+        res.cookie('token', token, {
+          httpOnly: !config.dev,
+          secure: !config.dev,
+        });
+
+        res.status(200).json(user);
+      });
+    } catch (error) {
+      next(error);
+    }
+  })(req, res, next);
+});
+
+app.post('/auth/sign-up', async (req, res, next) => {
+  const { body: user } = req;
+
+  try {
+    await axios({
+      url: `${config.apiUrl}/api/auth/sign-up`,
+      method: 'post',
+      data: user,
+    });
+
+    res.status(201).json({ message: 'user created' });
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.get('*', renderApp);
 
