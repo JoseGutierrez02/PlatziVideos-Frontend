@@ -91,22 +91,30 @@ const setResponse = (html, preloadedState, manifest) => {
     `;
 };
 
-const renderApp = (req, res) => {
+const renderApp = async (req, res) => {
   let initialState;
-  const { email, name, id } = req.cookies;
+  const { email, name, id, token } = req.cookies;
 
-  if (id) {
+  try {
+    let { data: moviesList } = await axios({
+      url: `${config.apiUrl}/api/movies`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'get',
+    });
+
+    moviesList = moviesList.data;
+
     initialState = {
       user: {
-        email, name, id,
+        id, email, name,
       },
       playing: {},
       search: [],
       myList: [],
-      trends: [],
-      originals: [],
+      trends: moviesList.filter((movie) => movie.category === 'trends' && movie._id),
+      originals: moviesList.filter((movie) => movie.category === 'originals' && movie._id),
     };
-  } else {
+  } catch (err) {
     initialState = {
       user: {},
       playing: {},
