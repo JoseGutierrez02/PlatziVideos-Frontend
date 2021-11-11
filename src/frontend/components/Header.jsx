@@ -10,7 +10,7 @@ import userIcon from '../assets/static/user-icon.png';
 
 const Header = (props) => {
   const { user, isLogin, isRegister, isNotFound } = props;
-  const hasUser = Object.keys(user).length > 0;
+  const hasUser = (user.id);
 
   const handleLogout = () => {
     document.cookie = 'email=';

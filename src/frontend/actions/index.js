@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import axios from 'axios';
 
 export const setFavorite = (payload) => ({
@@ -71,5 +72,43 @@ export const loginUser = ({ email, password }, redirectUrl) => {
         window.location.href = redirectUrl;
       })
       .catch((error) => dispatch(setError(error)));
+  };
+};
+
+export const addFavorite = (userId, movie) => {
+  return (dispatch) => {
+    axios({
+      url: '/user-movies',
+      method: 'post',
+      data: {
+        userId,
+        movieId: movie._id,
+      },
+    })
+      .then(({ data }) => {
+        if (data.data) {
+          movie['userMovieId'] = data.data;
+          dispatch(setFavorite(movie));
+        }
+      })
+      .catch((error) => {
+        dispatch(setError(error));
+      });
+  };
+};
+
+export const removeFavorite = (userMovieId) => {
+  return (dispatch) => {
+    axios({
+      url: `/user-movies/${userMovieId}`,
+      method: 'delete',
+      data: {
+        userMovieId,
+      },
+    })
+      .then(() => dispatch(deleteFavorite(userMovieId)))
+      .catch((error) => {
+        dispatch(setError(error));
+      });
   };
 };

@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable global-require */
 import express from 'express';
 import webpack from 'webpack';
@@ -102,7 +103,27 @@ const renderApp = async (req, res) => {
       method: 'get',
     });
 
+    let { data: userMovies } = await axios({
+      url: `${config.apiUrl}/api/user-movies`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'get',
+    });
+
     moviesList = moviesList.data;
+    userMovies = userMovies.data;
+    const myList = [];
+
+    if (userMovies && userMovies.length > 0) {
+      userMovies.map((userMovie) => {
+        moviesList.filter((movie) => {
+          if (userMovie.movieId === movie._id) {
+            const moviee = movie;
+            moviee['userMovieId'] = userMovie._id;
+            myList.push(moviee);
+          }
+        });
+      });
+    }
 
     initialState = {
       user: {
@@ -110,7 +131,7 @@ const renderApp = async (req, res) => {
       },
       playing: {},
       search: [],
-      myList: [],
+      myList,
       trends: moviesList.filter((movie) => movie.category === 'trends' && movie._id),
       originals: moviesList.filter((movie) => movie.category === 'originals' && movie._id),
     };
@@ -185,6 +206,49 @@ app.post('/auth/sign-up', async (req, res, next) => {
       email: user.email,
       id: userData.data.id,
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/user-movies', async (req, res, next) => {
+  try {
+    const { body: userMovie } = req;
+    const { token } = req.cookies;
+
+    const { data, status } = await axios({
+      url: `${config.apiUrl}/api/user-movies`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'post',
+      data: userMovie,
+    });
+
+    if (status !== 201) {
+      return next(boom.badImplementation());
+    }
+
+    res.status(201).json(data);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/user-movies/:userMovieId', async (req, res, next) => {
+  try {
+    const { userMovieId } = req.params;
+    const { token } = req.cookies;
+
+    const { data, status } = await axios({
+      url: `${config.apiUrl}/api/user-movies/${userMovieId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: 'delete',
+    });
+
+    if (status !== 200) {
+      return next(boom.badImplementation());
+    }
+
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
