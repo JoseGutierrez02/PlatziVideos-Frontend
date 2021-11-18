@@ -30,7 +30,11 @@ const Login = (props) => {
       <section className='login'>
         <section className='login__container'>
           <h2>Inicia sesión</h2>
-          <form className='login__container--form' onSubmit={handleSubmit}>
+          <form 
+            className='login__container--form' 
+            onSubmit={handleSubmit}
+            autoComplete='off'
+          >
             <input 
               name='email'
               aria-label='Correo' 

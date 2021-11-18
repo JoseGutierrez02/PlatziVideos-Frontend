@@ -30,7 +30,11 @@ const Register = (props) => {
       <section className='register'>
         <section className='register__container'>
           <h2>Regístrate</h2>
-          <form className='register__container--form' onSubmit={handleSubmit}>
+          <form 
+            className='register__container--form' 
+            onSubmit={handleSubmit}
+            autoComplete='off'
+          >
             <input 
               name='name'
               aria-label='Nombre' 
