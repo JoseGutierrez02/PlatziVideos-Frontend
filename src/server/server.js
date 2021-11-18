@@ -19,7 +19,7 @@ import getManifest from './getManifest';
 import { config } from './config';
 
 const app = express();
-const { env, port } = config;
+const { env, port, apiUrl } = config;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -98,13 +98,13 @@ const renderApp = async (req, res) => {
 
   try {
     let { data: moviesList } = await axios({
-      url: `${config.apiUrl}/api/movies`,
+      url: `${apiUrl}/api/movies`,
       headers: { Authorization: `Bearer ${token}` },
       method: 'get',
     });
 
     let { data: userMovies } = await axios({
-      url: `${config.apiUrl}/api/user-movies`,
+      url: `${apiUrl}/api/user-movies`,
       headers: { Authorization: `Bearer ${token}` },
       method: 'get',
     });
@@ -175,8 +175,8 @@ app.post('/auth/sign-in', async (req, res, next) => {
         const { token, ...user } = data;
 
         res.cookie('token', token, {
-          httpOnly: !config.dev,
-          secure: !config.dev,
+          httpOnly: env !== 'development',
+          secure: env !== 'development',
         });
 
         res.status(200).json(user);
@@ -192,7 +192,7 @@ app.post('/auth/sign-up', async (req, res, next) => {
 
   try {
     const userData = await axios({
-      url: `${config.apiUrl}/api/auth/sign-up`,
+      url: `${apiUrl}/api/auth/sign-up`,
       method: 'post',
       data: {
         'email': user.email,
@@ -217,7 +217,7 @@ app.post('/user-movies', async (req, res, next) => {
     const { token } = req.cookies;
 
     const { data, status } = await axios({
-      url: `${config.apiUrl}/api/user-movies`,
+      url: `${apiUrl}/api/user-movies`,
       headers: { Authorization: `Bearer ${token}` },
       method: 'post',
       data: userMovie,
@@ -239,7 +239,7 @@ app.delete('/user-movies/:userMovieId', async (req, res, next) => {
     const { token } = req.cookies;
 
     const { data, status } = await axios({
-      url: `${config.apiUrl}/api/user-movies/${userMovieId}`,
+      url: `${apiUrl}/api/user-movies/${userMovieId}`,
       headers: { Authorization: `Bearer ${token}` },
       method: 'delete',
     });
