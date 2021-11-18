@@ -54,6 +54,11 @@
 .carousel-item__details--title {
   color: #FFF;
   margin: 5px 0px 0px 0px;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 180px;
 }
 
 .carousel-item__details--subtitle {
