@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { registerUser } from '../actions';
+import SweetAlert from 'react-bootstrap-sweetalert';
+import { registerUser, setError } from '../actions';
 import Header from '../components/Header';
 import '../assets/styles/components/Register.scss';
 
@@ -11,6 +12,13 @@ const Register = (props) => {
     name: '',
     password: '',
   });
+  const [alert, setAlert] = useState(false);
+
+  useEffect(() => {
+    if (props.error && props.error.info) {
+      setAlert(true);
+    }
+  }, [props.error]);
 
   const handleInput = (event) => {
     setValues({
@@ -20,12 +28,38 @@ const Register = (props) => {
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    props.registerUser(form, '/login');
+    if (!form.email || !form.password || !form.password) {
+      event.preventDefault();
+      props.setError('Todos los campos son obligatorios');
+    } else {
+      event.preventDefault();
+      props.registerUser(form, '/login');
+    }
+  };
+
+  const handleConfirm = () => {
+    props.setError('');
+    setAlert(false);
   };
 
   return (
     <>
+      <SweetAlert
+        title='Whoops!'
+        onConfirm={handleConfirm}
+        show={alert}
+        customButtons={
+          <button 
+            className='dismiss-alert-button' 
+            onClick={handleConfirm}
+          >
+            OK
+          </button>
+        }
+      >
+        {props.error && props.error.info ? props.error.info : 'Ha habido un error'}
+      </SweetAlert>
+
       <Header isRegister />
       <section className='register'>
         <section className='register__container'>
@@ -73,8 +107,13 @@ const Register = (props) => {
   );
 };
 
+const mapStateToProps = ({ error }) => ({
+  error,
+});
+
 const mapDispatchToProps = {
   registerUser,
+  setError,
 };
 
-export default connect(null, mapDispatchToProps)(Register);
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

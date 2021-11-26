@@ -48,7 +48,10 @@ export const registerUser = (payload, redirectUrl) => {
       .then(() => {
         window.location.href = redirectUrl;
       })
-      .catch((error) => dispatch(setError(error)));
+      .catch((error) => {
+        console.log(error);
+        dispatch(setError('Ha ocurrido un error, \n verifique sus datos'));
+      });
   };
 };
 
@@ -71,7 +74,10 @@ export const loginUser = ({ email, password }, redirectUrl) => {
       .then(() => {
         window.location.href = redirectUrl;
       })
-      .catch((error) => dispatch(setError(error)));
+      .catch((error) => {
+        console.log(error);
+        dispatch(setError('El usuario y/o contraseña son incorrectos'));
+      });
   };
 };
 
@@ -90,9 +96,14 @@ export const addFavorite = (userId, movie) => {
           movie['userMovieId'] = data.data;
           dispatch(setFavorite(movie));
         }
+
+        if (data.data === null) {
+          dispatch(setError('La pelicula ya esta agregada a tus favoritos'));
+        }
       })
       .catch((error) => {
-        dispatch(setError(error));
+        console.log(error);
+        dispatch(setError('Ha ocurrido un error'));
       });
   };
 };
@@ -108,7 +119,8 @@ export const removeFavorite = (userMovieId) => {
     })
       .then(() => dispatch(deleteFavorite(userMovieId)))
       .catch((error) => {
-        dispatch(setError(error));
+        console.log(error);
+        dispatch(setError('Ha ocurrido un error'));
       });
   };
 };

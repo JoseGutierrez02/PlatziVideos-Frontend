@@ -12,3 +12,14 @@ body {
   font-family: $theme-font;
   background-color: $main-color;
 }
+
+.dismiss-alert-button {
+  padding: .5rem 1rem;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  background: #8F57FD;
+  cursor: pointer;
+  color: #FFF;
+  border: none;
+  line-height: 1.5;
+}

@@ -116,7 +116,7 @@ const renderApp = async (req, res) => {
     if (userMovies && userMovies.length > 0) {
       userMovies.map((userMovie) => {
         moviesList.filter((movie) => {
-          if (userMovie.movieId === movie._id) {
+          if (userMovie.movieId === movie._id && userMovie.userId === id) {
             const moviee = movie;
             moviee['userMovieId'] = userMovie._id;
             myList.push(moviee);
@@ -134,6 +134,7 @@ const renderApp = async (req, res) => {
       myList,
       trends: moviesList.filter((movie) => movie.category === 'trends' && movie._id),
       originals: moviesList.filter((movie) => movie.category === 'originals' && movie._id),
+      error: {},
     };
   } catch (err) {
     initialState = {
@@ -143,6 +144,7 @@ const renderApp = async (req, res) => {
       myList: [],
       trends: [],
       originals: [],
+      error: {},
     };
   }
 

@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { searchRequest } from '../actions';
+import SweetAlert from 'react-bootstrap-sweetalert';
+import { searchRequest, setError } from '../actions';
 import Header from '../components/Header';
 import Search from '../components/Search';
 import Categories from '../components/Categories';
@@ -8,14 +9,43 @@ import Carousel from '../components/Carousel';
 import CarouselItem from '../components/CarouselItem';
 import '../assets/styles/App.scss';
 
-const Home = ({ myList, trends, originals, search, searchRequest }) => {
+const Home = ({ myList, trends, originals, search, searchRequest, setError, error }) => {
+  const [alert, setAlert] = useState(false);
   const hasSearch = search.length > 0;
   const isList = myList.length > 0;
   useEffect(() => { 
     if (hasSearch) searchRequest('');
   }, []);
+
+  useEffect(() => {
+    if (error && error.info) {
+      setAlert(true);
+    }
+  }, [error]);
+
+  const handleConfirm = () => {
+    setError('');
+    setAlert(false);
+  };
+
   return (
     <>
+      <SweetAlert
+        title='Whoops!'
+        onConfirm={handleConfirm}
+        show={alert}
+        customButtons={
+          <button 
+            className='dismiss-alert-button' 
+            onClick={handleConfirm}
+          >
+            OK
+          </button>
+        }
+      >
+        {error && error.info ? error.info : 'Ha habido un error'}
+      </SweetAlert>
+
       <Header />
       <Search isHome />
 
@@ -62,15 +92,17 @@ const Home = ({ myList, trends, originals, search, searchRequest }) => {
   );
 };
 
-const mapStateToProps = ({ myList, trends, originals, search }) => ({
+const mapStateToProps = ({ myList, trends, originals, search, error }) => ({
   myList,
   trends,
   originals,
   search,
+  error,
 });
 
 const mapDispatchToProps = {
   searchRequest,
+  setError,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

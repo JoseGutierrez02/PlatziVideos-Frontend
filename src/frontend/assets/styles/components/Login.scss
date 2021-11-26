@@ -15,7 +15,7 @@
   border-radius: 40px;
   color: #FFF;
   padding: 60px 68px 40px;
-  min-height: 800px;
+  min-height: 650px;
   width: 440px;
   display: flex;
   justify-content: space-around;
@@ -29,23 +29,6 @@
 
 .login__container--form label {
   font-size: 14px;
-}
-
-.login__container--remember {
-  color: #FFF;
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.login__container--remember a {
-  color: #FFF;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.login__container--remember a:hover {
-  text-decoration: underline;
 }
 
 .login__container--social-media > div {

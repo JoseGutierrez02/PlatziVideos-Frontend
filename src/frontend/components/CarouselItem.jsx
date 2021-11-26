@@ -8,7 +8,7 @@ import playIcon from '../assets/static/play-icon.png';
 import plusIcon from '../assets/static/plus-icon.png';
 import removeIcon from '../assets/static/remove-icon.png';
 
-const CarouselItem = (props) => { 
+const CarouselItem = (props) => {
   const { 
     _id, cover, title, year, contentRating, duration, isList, user, userMovieId,
   } = props;

@@ -31,7 +31,6 @@ const reducer = (state, action) => {
     case 'GET_VIDEO_SOURCE':
       const lists = [...state.trends, ...state.originals];
       lists.find((item) => {
-        console.log(item._id, action.payload);
         return item._id === action.payload;
       });
       return {
@@ -44,6 +43,13 @@ const reducer = (state, action) => {
       return {
         ...state,
         search: fullList.filter((item) => item.title.toLowerCase().includes(action.payload.toLowerCase())) || [],
+      };
+    case 'SET_ERROR':
+      return {
+        ...state,
+        error: {
+          info: action.payload,
+        },
       };
     default:
       return state;
